@@ -40,6 +40,14 @@
                 btn.classList.add('border-indigo-500', 'text-indigo-400');
             }
             window.dispatchEvent(new Event('resize'));
+            setTimeout(function() {
+                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && typeof Plotly !== 'undefined') {
+                        Plotly.Plots.resize(el);
+                    }
+                });
+            }, 50);
         }
 
         function switchSubTab(strat, mode) {
@@ -55,6 +63,14 @@
                 subBtn.classList.add('bg-indigo-600', 'text-white');
             }
             window.dispatchEvent(new Event('resize'));
+            setTimeout(function() {
+                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart'].forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el && typeof Plotly !== 'undefined') {
+                        Plotly.Plots.resize(el);
+                    }
+                });
+            }, 50);
         }
     </script>
 </head>
@@ -72,7 +88,7 @@
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium text-xs flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SYSTEMS ACTIVE
             </span>
-            <span class="text-slate-400 text-xs">Updated: 2026-11-02 10:10</span>
+            <span class="text-slate-400 text-xs">Updated: 2026-11-02 10:15</span>
         </div>
     </header>
 
@@ -1048,58 +1064,60 @@
 
     <!-- Plotly Interactive Charts Script -->
     <script>
-        const overviewData = [{{
-            x: {json.dumps(overview_x)},
-            y: {json.dumps(overview_y)},
-            type: 'scatter',
-            mode: 'lines',
-            name: 'Portfolio Equity Index',
-            line: {{ color: '#6366f1', width: 2 }},
-            hoverinfo: 'x+y'
-        }}];
+        document.addEventListener('DOMContentLoaded', function() {{
+            const overviewData = [{{
+                x: {json.dumps(overview_x)},
+                y: {json.dumps(overview_y)},
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Portfolio Equity Index',
+                line: {{ color: '#6366f1', width: 2 }},
+                hoverinfo: 'x+y'
+            }}];
 
-        const overviewLayout = {{
-            paper_bgcolor: 'transparent',
-            plot_bgcolor: 'transparent',
-            font: {{ color: '#94a3b8', family: 'sans-serif' }},
-            margin: {{ t: 20, r: 20, b: 40, l: 50 }},
-            xaxis: {{ gridcolor: '#1e293b' }},
-            yaxis: {{ gridcolor: '#1e293b', title: 'Equity Index (Base 100)' }}
-        }};
+            const overviewLayout = {{
+                paper_bgcolor: 'transparent',
+                plot_bgcolor: 'transparent',
+                font: {{ color: '#94a3b8', family: 'sans-serif' }},
+                margin: {{ t: 20, r: 20, b: 40, l: 50 }},
+                xaxis: {{ gridcolor: '#1e293b' }},
+                yaxis: {{ gridcolor: '#1e293b', title: 'Equity Index (Base 100)' }}
+            }};
 
-        Plotly.newPlot('overview-chart', overviewData, overviewLayout, {{responsive: true}});
+            Plotly.newPlot('overview-chart', overviewData, overviewLayout, {{responsive: true}});
 
-        const h6LiveWeights = [{{
-            x: {json.dumps(h6_live_x)},
-            y: {json.dumps(h6_live_y)},
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: 'H6 Live Realized PnL',
-            line: {{ color: '#10b981', width: 2 }},
-            marker: {{ size: 6 }}
-        }}];
-        Plotly.newPlot('h6-live-chart', h6LiveWeights, {{ ...overviewLayout, yaxis: {{ gridcolor: '#1e293b', title: 'Realized PnL ($)' }} }}, {{responsive: true}});
+            const h6LiveWeights = [{{
+                x: {json.dumps(h6_live_x)},
+                y: {json.dumps(h6_live_y)},
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'H6 Live Realized PnL',
+                line: {{ color: '#10b981', width: 2 }},
+                marker: {{ size: 6 }}
+            }}];
+            Plotly.newPlot('h6-live-chart', h6LiveWeights, Object.assign({{}}, overviewLayout, {{ yaxis: {{ gridcolor: '#1e293b', title: 'Realized PnL ($)' }} }}), {{responsive: true}});
 
-        const h6BtWeights = [{{
-            x: {json.dumps(h6_bt_x)},
-            y: {json.dumps(h6_bt_y)},
-            type: 'scatter',
-            mode: 'lines',
-            name: 'H6 15m Backtest (843 trades)',
-            line: {{ color: '#6366f1', width: 2 }}
-        }}];
-        Plotly.newPlot('h6-bt-chart', h6BtWeights, {{ ...overviewLayout, yaxis: {{ gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' }} }}, {{responsive: true}});
+            const h6BtWeights = [{{
+                x: {json.dumps(h6_bt_x)},
+                y: {json.dumps(h6_bt_y)},
+                type: 'scatter',
+                mode: 'lines',
+                name: 'H6 15m Backtest (843 trades)',
+                line: {{ color: '#6366f1', width: 2 }}
+            }}];
+            Plotly.newPlot('h6-bt-chart', h6BtWeights, Object.assign({{}}, overviewLayout, {{ yaxis: {{ gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' }} }}), {{responsive: true}});
 
-        const volBtWeights = [{{
-            x: {json.dumps(vol_bt_x)},
-            y: {json.dumps(vol_bt_y)},
-            type: 'scatter',
-            mode: 'lines+markers',
-            name: 'High-Vol 2x (23 trades)',
-            line: {{ color: '#f59e0b', width: 2 }},
-            marker: {{ size: 5 }}
-        }}];
-        Plotly.newPlot('vol-bt-chart', volBtWeights, {{ ...overviewLayout, yaxis: {{ gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' }} }}, {{responsive: true}});
+            const volBtWeights = [{{
+                x: {json.dumps(vol_bt_x)},
+                y: {json.dumps(vol_bt_y)},
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'High-Vol 2x (23 trades)',
+                line: {{ color: '#f59e0b', width: 2 }},
+                marker: {{ size: 5 }}
+            }}];
+            Plotly.newPlot('vol-bt-chart', volBtWeights, Object.assign({{}}, overviewLayout, {{ yaxis: {{ gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' }} }}), {{responsive: true}});
+        }});
     </script>
 </body>
 </html>
