@@ -46,6 +46,21 @@
             document.body.removeChild(link);
         }
 
+        window.CHART_DEFS = window.CHART_DEFS || {};
+
+        function refreshVisibleCharts() {
+            if (typeof Plotly === 'undefined') return;
+            Object.keys(window.CHART_DEFS).forEach(function (id) {
+                var el = document.getElementById(id);
+                if (!el || el.clientWidth === 0) return;
+                if (el.getAttribute('data-chart-pending') === '1' || !el.data) {
+                    if (typeof window.drawChart === 'function') window.drawChart(id);
+                } else {
+                    try { Plotly.Plots.resize(el); } catch (e) {}
+                }
+            });
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(el => {
@@ -59,14 +74,8 @@
                 btn.classList.add('border-indigo-500', 'text-indigo-400');
             }
             window.dispatchEvent(new Event('resize'));
-            setTimeout(function() {
-                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'h7-wfo-trajectory-chart', 'h7-param-dynamics-chart', 'h7-calibration-chart'].forEach(function(id) {
-                    var el = document.getElementById(id);
-                    if (el && typeof Plotly !== 'undefined') {
-                        Plotly.Plots.resize(el);
-                    }
-                });
-            }, 50);
+            setTimeout(function() { refreshVisibleCharts(); }, 60);
+            setTimeout(function() { refreshVisibleCharts(); }, 350);
         }
 
         function switchSubTab(strat, mode) {
@@ -82,14 +91,8 @@
                 subBtn.classList.add('bg-indigo-600', 'text-white');
             }
             window.dispatchEvent(new Event('resize'));
-            setTimeout(function() {
-                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'h7-wfo-trajectory-chart', 'h7-param-dynamics-chart', 'h7-calibration-chart'].forEach(function(id) {
-                    var el = document.getElementById(id);
-                    if (el && typeof Plotly !== 'undefined') {
-                        Plotly.Plots.resize(el);
-                    }
-                });
-            }, 50);
+            setTimeout(function() { refreshVisibleCharts(); }, 60);
+            setTimeout(function() { refreshVisibleCharts(); }, 350);
         }
     </script>
 </head>
@@ -110,7 +113,7 @@
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium text-xs flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SYSTEMS ACTIVE
             </span>
-            <span class="text-slate-400 text-xs">Updated: 2026-11-05 02:11</span>
+            <span class="text-slate-400 text-xs">Updated: 2026-11-05 02:15</span>
         </div>
     </header>
 
@@ -1995,7 +1998,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-800 text-sm">
-                        <tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Default</td><td class="p-4 font-mono font-bold text-slate-300">0.865</td><td class="p-4 font-mono">43.9%</td><td class="p-4 font-mono text-emerald-400">+-68.89%</td><td class="p-4 font-mono font-bold text-slate-300">1.045</td><td class="p-4 font-mono">45.0%</td><td class="p-4 font-mono text-emerald-400">+3.38%</td><td class="p-4 font-mono">513</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">TPE</td><td class="p-4 font-mono font-bold text-slate-300">0.925</td><td class="p-4 font-mono">40.8%</td><td class="p-4 font-mono text-emerald-400">+-56.71%</td><td class="p-4 font-mono font-bold text-slate-300">0.740</td><td class="p-4 font-mono">36.2%</td><td class="p-4 font-mono text-emerald-400">+-8.33%</td><td class="p-4 font-mono">820</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Sobol Baseline</td><td class="p-4 font-mono font-bold text-slate-300">0.919</td><td class="p-4 font-mono">40.9%</td><td class="p-4 font-mono text-emerald-400">+-81.05%</td><td class="p-4 font-mono font-bold text-slate-300">0.818</td><td class="p-4 font-mono">46.2%</td><td class="p-4 font-mono text-emerald-400">+-1.46%</td><td class="p-4 font-mono">947</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Sobol+5NN</td><td class="p-4 font-mono font-bold text-slate-300">0.927</td><td class="p-4 font-mono">38.8%</td><td class="p-4 font-mono text-emerald-400">+-72.13%</td><td class="p-4 font-mono font-bold text-slate-300">0.818</td><td class="p-4 font-mono">46.2%</td><td class="p-4 font-mono text-emerald-400">+-1.46%</td><td class="p-4 font-mono">929</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="bg-emerald-500/10 hover:bg-emerald-500/20 font-semibold"><td class="p-4 text-white font-medium">TimesFM Meta-Control</td><td class="p-4 font-mono font-bold text-slate-300">0.944</td><td class="p-4 font-mono">39.3%</td><td class="p-4 font-mono text-emerald-400">+-56.06%</td><td class="p-4 font-mono font-bold text-emerald-400">1.615</td><td class="p-4 font-mono">57.9%</td><td class="p-4 font-mono text-emerald-400">+4.95%</td><td class="p-4 font-mono">970</td><td class="p-4"><span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">WINNER</span></td></tr>
+                        <tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Default</td><td class="p-4 font-mono font-bold text-slate-300">0.865</td><td class="p-4 font-mono">43.9%</td><td class="p-4 font-mono text-rose-400">-68.89%</td><td class="p-4 font-mono font-bold text-slate-300">1.045</td><td class="p-4 font-mono">45.0%</td><td class="p-4 font-mono text-emerald-400">+3.38%</td><td class="p-4 font-mono">513</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">TPE</td><td class="p-4 font-mono font-bold text-slate-300">0.925</td><td class="p-4 font-mono">40.8%</td><td class="p-4 font-mono text-rose-400">-56.71%</td><td class="p-4 font-mono font-bold text-slate-300">0.740</td><td class="p-4 font-mono">36.2%</td><td class="p-4 font-mono text-rose-400">-8.33%</td><td class="p-4 font-mono">820</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Sobol Baseline</td><td class="p-4 font-mono font-bold text-slate-300">0.919</td><td class="p-4 font-mono">40.9%</td><td class="p-4 font-mono text-rose-400">-81.05%</td><td class="p-4 font-mono font-bold text-slate-300">0.818</td><td class="p-4 font-mono">46.2%</td><td class="p-4 font-mono text-rose-400">-1.46%</td><td class="p-4 font-mono">947</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="hover:bg-slate-800/50"><td class="p-4 text-white font-medium">Sobol+5NN</td><td class="p-4 font-mono font-bold text-slate-300">0.927</td><td class="p-4 font-mono">38.8%</td><td class="p-4 font-mono text-rose-400">-72.13%</td><td class="p-4 font-mono font-bold text-slate-300">0.818</td><td class="p-4 font-mono">46.2%</td><td class="p-4 font-mono text-rose-400">-1.46%</td><td class="p-4 font-mono">929</td><td class="p-4"><span class="text-slate-400 text-xs">Baseline</span></td></tr><tr class="bg-emerald-500/10 hover:bg-emerald-500/20 font-semibold"><td class="p-4 text-white font-medium">TimesFM Meta-Control</td><td class="p-4 font-mono font-bold text-slate-300">0.944</td><td class="p-4 font-mono">39.3%</td><td class="p-4 font-mono text-rose-400">-56.06%</td><td class="p-4 font-mono font-bold text-emerald-400">1.615</td><td class="p-4 font-mono">57.9%</td><td class="p-4 font-mono text-emerald-400">+4.95%</td><td class="p-4 font-mono">970</td><td class="p-4"><span class="px-2 py-0.5 bg-emerald-500/20 text-emerald-300 text-xs rounded border border-emerald-500/30">WINNER</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -2050,13 +2053,36 @@
                     console.warn('Target element not found:', divId);
                     return;
                 }
+                window.CHART_DEFS[divId] = { data: data, layout: layout };
+                // Hidden tab/subtab containers have clientWidth 0; Plotly would paint an empty plot.
+                // Defer until the container is actually visible (see refreshVisibleCharts).
+                if (el.clientWidth === 0) {
+                    el.setAttribute('data-chart-pending', '1');
+                    return;
+                }
+                drawChart(divId);
+            }
+
+            function drawChart(divId) {
+                const el = document.getElementById(divId);
+                const def = window.CHART_DEFS[divId];
+                if (!el || !def || typeof Plotly === 'undefined' || el.clientWidth === 0) {
+                    return;
+                }
                 try {
-                    Plotly.newPlot(divId, data, layout, {responsive: true});
+                    // Deep-clone: charts share axis objects through Object.assign, and Plotly
+                    // mutates the layout it receives (e.g. forces xaxis.type = 'date'), which
+                    // would break later charts that use categorical axes.
+                    const safeLayout = JSON.parse(JSON.stringify(def.layout || {}));
+                    const safeData = JSON.parse(JSON.stringify(def.data || []));
+                    Plotly.newPlot(divId, safeData, safeLayout, {responsive: true});
+                    el.removeAttribute('data-chart-pending');
                 } catch (err) {
                     console.error('Error rendering chart ' + divId + ':', err);
                     el.innerHTML = '<div class="p-4 text-rose-500 font-mono text-xs">Chart Error: ' + err.message + '</div>';
                 }
             }
+            window.drawChart = drawChart;
 
             function renderAllCharts() {
                 const overviewData = [{
