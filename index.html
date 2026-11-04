@@ -51,7 +51,7 @@
             }
             window.dispatchEvent(new Event('resize'));
             setTimeout(function() {
-                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart'].forEach(function(id) {
+                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart', 'whale-flow-chart', 'whale-importance-chart', 'whale-equity-chart'].forEach(function(id) {
                     var el = document.getElementById(id);
                     if (el && typeof Plotly !== 'undefined') {
                         Plotly.Plots.resize(el);
@@ -74,7 +74,7 @@
             }
             window.dispatchEvent(new Event('resize'));
             setTimeout(function() {
-                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart'].forEach(function(id) {
+                ['overview-chart', 'h6-live-chart', 'h6-bt-chart', 'vol-bt-chart', 'whale-flow-chart', 'whale-importance-chart', 'whale-equity-chart'].forEach(function(id) {
                     var el = document.getElementById(id);
                     if (el && typeof Plotly !== 'undefined') {
                         Plotly.Plots.resize(el);
@@ -101,7 +101,7 @@
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium text-xs flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SYSTEMS ACTIVE
             </span>
-            <span class="text-slate-400 text-xs">Updated: 2026-11-04 11:17</span>
+            <span class="text-slate-400 text-xs">Updated: 2026-11-04 11:22</span>
         </div>
     </header>
 
@@ -114,6 +114,9 @@
             <i class="fa-solid fa-robot"></i> 📊 H#6.2 Ensemble 15m
         </button>
         <button onclick="switchTab('tab-vol')" id="btn-tab-vol" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2">
+        </button>
+        <button onclick="switchTab('tab-whale')" id="btn-tab-whale" class="tab-btn px-4 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-400 hover:text-white transition flex items-center gap-2">
+            <i class="fa-solid fa-water"></i> 🐋 Whale Flow & TimesFM
             <i class="fa-solid fa-bolt"></i> 🚀 High-Vol 2x Leverage
         </button>
     </nav>
@@ -1626,7 +1629,102 @@
                 </div>
             </div>
         </div>
+
+        <!-- TAB WHALE: WHALE ON-CHAIN FLOW & TIMESFM IMPACT -->
+        <div id="tab-whale" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">ETH Delta Sharpe</p>
+                    <h3 class="text-3xl font-extrabold text-emerald-400 mt-2">+0.9910</h3>
+                    <p class="text-xs text-slate-400 mt-1">Baseline: -3.2032 → Covariates: -2.2122</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">ETH Win Rate Delta</p>
+                    <h3 class="text-3xl font-extrabold text-emerald-400 mt-2">+0.30%</h3>
+                    <p class="text-xs text-slate-400 mt-1">Win rate improved to 49.85%</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">BTC Delta Sharpe</p>
+                    <h3 class="text-3xl font-extrabold text-rose-400 mt-2">-1.0417</h3>
+                    <p class="text-xs text-slate-400 mt-1">Requires directional regime filter</p>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider">Active Covariates</p>
+                    <h3 class="text-3xl font-extrabold text-indigo-400 mt-2">5 Features</h3>
+                    <p class="text-xs text-slate-400 mt-1">net_z, max_tx_log, log_to_ex, n_tx_rvol, log_from_ex</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-bold text-white mb-4">🐋 On-Chain Net Exchange Flow (BTC vs ETH)</h3>
+                    <div id="whale-flow-chart" style="height:380px;"></div>
+                </div>
+                <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                    <h3 class="text-lg font-bold text-white mb-4">📊 TimesFM Feature Importance & Weights</h3>
+                    <div id="whale-importance-chart" style="height:380px;"></div>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold text-white mb-4">📈 Cumulative Equity: Baseline vs Whale Covariates</h3>
+                <div id="whale-equity-chart" style="height:380px;"></div>
+            </div>
+
+            <div class="bg-slate-900 border border-slate-800 p-6 rounded-xl shadow-lg">
+                <h3 class="text-lg font-bold text-white mb-4">📋 TimesFM Multi-Asset Impact Summary</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-800 text-xs uppercase text-slate-400">
+                            <tr>
+                                <th class="p-3">Asset</th>
+                                <th class="p-3">Model Variant</th>
+                                <th class="p-3">Sharpe Ratio</th>
+                                <th class="p-3">Profit Factor</th>
+                                <th class="p-3">Win Rate</th>
+                                <th class="p-3">Delta Sharpe</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800">
+                            <tr class="hover:bg-slate-800/50">
+                                <td class="p-3 font-bold text-white">ETHUSDT</td>
+                                <td class="p-3">TimesFM Baseline</td>
+                                <td class="p-3 text-slate-400">-3.2032</td>
+                                <td class="p-3 text-slate-400">0.9142</td>
+                                <td class="p-3 text-slate-400">49.55%</td>
+                                <td class="p-3 text-slate-400">-</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/50">
+                                <td class="p-3 font-bold text-emerald-400">ETHUSDT</td>
+                                <td class="p-3 font-semibold text-emerald-400">With Whale Covariates</td>
+                                <td class="p-3 text-emerald-400">-2.2122</td>
+                                <td class="p-3 text-emerald-400">0.9434</td>
+                                <td class="p-3 text-emerald-400">49.85%</td>
+                                <td class="p-3 font-bold text-emerald-400">+0.9910</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/50">
+                                <td class="p-3 font-bold text-white">BTCUSDT</td>
+                                <td class="p-3">TimesFM Baseline</td>
+                                <td class="p-3 text-slate-400">-1.9703</td>
+                                <td class="p-3 text-slate-400">0.9412</td>
+                                <td class="p-3 text-slate-400">50.12%</td>
+                                <td class="p-3 text-slate-400">-</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/50">
+                                <td class="p-3 font-bold text-rose-400">BTCUSDT</td>
+                                <td class="p-3 font-semibold text-rose-400">With Whale Covariates</td>
+                                <td class="p-3 text-rose-400">-3.0120</td>
+                                <td class="p-3 text-rose-400">0.9100</td>
+                                <td class="p-3 text-rose-400">49.82%</td>
+                                <td class="p-3 font-bold text-rose-400">-1.0417</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </main>
+    
 
     <!-- Footer -->
     <footer class="bg-slate-900 border-t border-slate-800 text-center py-4 text-xs text-slate-500">
