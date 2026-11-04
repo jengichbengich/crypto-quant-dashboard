@@ -101,7 +101,7 @@
             <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full font-medium text-xs flex items-center gap-1">
                 <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> LIVE SYSTEMS ACTIVE
             </span>
-            <span class="text-slate-400 text-xs">Updated: 2026-11-04 18:13</span>
+            <span class="text-slate-400 text-xs">Updated: 2026-11-04 18:14</span>
         </div>
     </header>
 
@@ -2009,16 +2009,7 @@
                 }];
                 renderChart('h6-bt-chart', h6BtWeights, Object.assign({}, overviewLayout, { yaxis: { gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' } }));
 
-                const volBtWeights = [{
-                    x: ["2026-10-18 02:15:00", "2026-10-18 03:15:00", "2026-10-18 03:30:00", "2026-10-18 05:00:00", "2026-10-19 06:15:00", "2026-10-19 07:00:00", "2026-10-19 07:15:00", "2026-10-20 16:15:00", "2026-10-20 16:15:00", "2026-10-23 17:30:00", "2026-10-24 11:45:00", "2026-10-25 00:00:00", "2026-10-25 02:15:00", "2026-10-25 08:30:00", "2026-10-25 11:30:00", "2026-10-25 13:00:00", "2026-10-26 16:00:00", "2026-10-27 04:45:00", "2026-10-27 13:45:00", "2026-10-28 07:00:00", "2026-10-29 02:00:00", "2026-10-29 03:45:00", "2026-10-30 09:15:00", "2026-11-01 16:15:00"],
-                    y: [100.0, 95.0, 90.25, 112.18, 106.57, 101.24, 96.18, 104.59, 103.55, 133.38, 126.71, 124.52, 126.71, 124.62, 133.45, 154.62, 146.89, 151.58, 179.98, 170.98, 162.43, 199.23, 189.27, 207.93],
-                    type: 'scatter',
-                    mode: 'lines+markers',
-                    name: 'High-Vol 2x (23 trades)',
-                    line: { color: '#f59e0b', width: 2 },
-                    marker: { size: 5 }
-                }];
-                renderChart('vol-bt-chart', volBtWeights, Object.assign({}, overviewLayout, { yaxis: { gridcolor: '#1e293b', title: 'Equity Growth (Base 100)' } }));
+
             }
         });
 
